@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Untuk Fadhia Liza Bachtiar — Cinta & Janji | Feri</title>
+  <meta name="description" content="Halaman romantis bertema galaxy & sakura: permintaan maaf, janji perbaikan, galeri kenangan 3D, countdown anniversary, dan musik lembut." />
+  <meta property="og:title" content="Untukmu, Sayangku" />
+  <meta property="og:description" content="Galaxy + Sakura • Surat cinta, janji, galeri 3D, countdown, musik lembut." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#ff6fa8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --pink:#ff6fa8; --pink-2:#ff8fbd; --deep:#2b1b3f; --ink:#0b0713; --glass:rgba(255,255,255,.08);
+      --text:#f8eefe; --muted:#d7cbe6; --accent:#9f7cff; --white:#ffffff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 70% 10%, rgba(255,111,168,.25), transparent 60%),
+                  radial-gradient(900px 500px at 0% 100%, rgba(159,124,255,.25), transparent 60%),
+                  linear-gradient(180deg, #0b0713 0%, #1a0f2a 60%, #0b0713 100%);
+      overflow-x:hidden;
+    }
+    .visually-hidden{position:absolute!important; height:1px;width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap}
+
+    /* Layers */
+    .layer{position:fixed; inset:0; pointer-events:none}
+    #starCanvas, #fxCanvas{width:100%; height:100%; display:block}
+    #starCanvas{z-index:0}
+    #fxCanvas{z-index:2}
+
+    header.hero{
+      position:relative; z-index:1; padding-top:80px; padding-bottom:40px; min-height:70vh;
+      display:grid; place-items:center; text-align:center;
+    }
+    .hero-inner{max-width:980px; padding:24px}
+    h1.title{font-family:"Noto Serif JP", serif; font-weight:700; font-size:clamp(34px,5vw,58px);
+      line-height:1.1; letter-spacing:.3px; margin:0 0 10px;
+      text-shadow:0 0 18px rgba(255,111,168,.35), 0 0 42px rgba(159,124,255,.25);
+    }
+    .subtitle{font-size:clamp(16px,2.5vw,20px); color:var(--muted); margin-bottom:18px}
+    .typewriter{font-size:clamp(16px,2.5vw,20px); line-height:1.7; margin:10px auto 18px; min-height:84px}
+    .btns{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+    button.btn{
+      pointer-events:auto; appearance:none; border:1px solid rgba(255,255,255,.15);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color:var(--white); padding:10px 16px; border-radius:14px; font-weight:600; letter-spacing:.2px;
+      box-shadow:0 6px 30px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.05);
+      transition:.2s transform ease, .2s background ease, .2s box-shadow ease;
+    }
+    button.btn:hover{transform:translateY(-2px); box-shadow:0 10px 36px rgba(0,0,0,.3), 0 0 16px rgba(255,111,168,.25)}
+    button.btn.accent{background:linear-gradient(180deg, rgba(255,111,168,.35), rgba(159,124,255,.25));}
+
+    /* Cards */
+    .container{position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:20px;}
+    .card{backdrop-filter: blur(10px); background:var(--glass); border:1px solid rgba(255,255,255,.09);
+      border-radius:20px; padding:22px 18px; box-shadow:0 8px 50px rgba(0,0,0,.3);
+    }
+    .grid{display:grid; gap:18px}
+    @media(min-width:860px){.grid{grid-template-columns:1.1fr .9fr}}
+    h2{font-family:"Noto Serif JP", serif; font-weight:700; letter-spacing:.2px; margin:8px 0 10px; font-size:28px}
+    p{margin:.5em 0; color:#efe7ff}
+    ul.promises{margin:.6em 0 0 1.1em; padding:0}
+    ul.promises li{margin:.45em 0}
+
+    /* Counters */
+    .counters{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:8px}
+    .counter{padding:14px; border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.09); text-align:center}
+    .counter .num{font-size:34px; font-weight:700}
+    .counter .label{font-size:13px; color:var(--muted)}
+
+    /* 3D Gallery */
+    section#gallery{margin-top:24px}
+    .gallery-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+    .gallery-actions{display:flex; gap:8px; align-items:center}
+    .stage{position:relative; perspective:1200px; height:430px; margin-top:14px}
+    .ring{position:absolute; inset:0; transform-style:preserve-3d; will-change:transform}
+    .item{position:absolute; top:50%; left:50%; transform-style:preserve-3d; width:240px; height:160px; margin:-80px -120px; border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.1)}
+    .item img{width:100%; height:100%; object-fit:cover; display:block}
+    .item .cap{position:absolute; left:0; right:0; bottom:0; padding:6px 10px; font-size:12px; background:linear-gradient(to top, rgba(0,0,0,.45), transparent); text-shadow:0 2px 6px rgba(0,0,0,.8)}
+
+    /* Lightbox */
+    .lightbox{position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center; background:rgba(7,5,12,.78)}
+    .lightbox.open{display:flex}
+    .lb-inner{position:relative; max-width:92vw; max-height:85vh}
+    .lb-img{max-width:92vw; max-height:85vh; border-radius:16px; box-shadow:0 18px 80px rgba(0,0,0,.6)}
+    .lb-cap{margin-top:8px; text-align:center; color:var(--muted)}
+    .lb-nav{position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between}
+    .lb-btn{pointer-events:auto; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); width:44px;height:44px; border-radius:50%; display:grid; place-items:center}
+
+    /* Overlay Start */
+    .overlay{position:fixed; inset:0; z-index:60; display:none; background:linear-gradient(180deg, rgba(11,7,19,.7), rgba(11,7,19,.9)); align-items:center; justify-content:center; text-align:center; padding:20px}
+    .overlay.show{display:flex}
+
+    /* Footer */
+    footer{padding:26px 18px 70px; text-align:center; color:var(--muted)}
+
+    /* Focus */
+    :focus-visible{outline:2px solid var(--pink); outline-offset:2px; border-radius:10px}
+  </style>
+</head>
+<body>
+  <!-- Background layers -->
+  <canvas id="starCanvas" class="layer" aria-hidden="true"></canvas>
+  <canvas id="fxCanvas" class="layer" aria-hidden="true"></canvas>
+
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <h1 class="title" id="pageTitle">Untukmu, Sayangku</h1>
+      <div class="subtitle" id="subtitle">Galaxy • Sakura • Cinta tanpa henti</div>
+      <div class="typewriter" id="typewriter" aria-live="polite"></div>
+      <div class="btns" role="group" aria-label="Kontrol">
+        <button class="btn accent" id="btnPlay">▶️ Putar Musik</button>
+        <button class="btn" id="btnMute">🔈 Mute</button>
+        <button class="btn" id="btnSkip">⏭️ Tampilkan Semua</button>
+        <button class="btn" id="btnAnniv">🎉 Mode Anniversary</button>
+        <button class="btn" id="btnOpenGaleri">🌌 Buka Galeri 3D</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="mainContent">
+    <div class="grid">
+      <section class="card" aria-labelledby="hSurat">
+        <h2 id="hSurat">Surat Cinta & Janji</h2>
+        <p id="p1"></p>
+        <p id="p2"></p>
+        <ul class="promises" aria-label="Janji-janji hangat">
+          <li>Mendengar dulu, menjawab kemudian; tanpa menyela.</li>
+          <li>Transparan urusan keuangan; bertumbuh bersama memperbaiki ekonomi.</li>
+          <li>Waktu berkualitas tiap pekan, sesederhana apa pun.</li>
+          <li>Doa bersama tiap malam; saling jaga hati dan tutur.</li>
+        </ul>
+      </section>
+      <section class="card" aria-labelledby="hCounter">
+        <h2 id="hCounter">Hitungan Cinta</h2>
+        <div class="counters">
+          <div class="counter" aria-live="polite">
+            <div class="num" id="daysTogether">0</div>
+            <div class="label">Hari bersama sejak pertama bertemu</div>
+          </div>
+          <div class="counter" aria-live="polite">
+            <div class="num" id="annivIn">0</div>
+            <div class="label">Hari menuju Anniversary</div>
+          </div>
+          <div class="counter" aria-live="polite">
+            <div class="num" id="annivKe">1</div>
+            <div class="label">Anniversary ke-</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="gallery">
+      <div class="gallery-head">
+        <h2>Galeri Kenangan 3D Galaxy</h2>
+        <div class="gallery-actions">
+          <button class="btn" id="btnPrev" aria-label="Sebelumnya">⟵</button>
+          <button class="btn" id="btnNext" aria-label="Berikutnya">⟶</button>
+          <button class="btn" id="btnReload">↻ Muat Ulang</button>
+          <label class="btn" for="filePicker" id="pickLabel">📂 Pilih Foto</label>
+          <input id="filePicker" class="visually-hidden" type="file" accept="image/*" multiple>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="stage" id="stage" aria-live="polite" aria-label="Galeri 3D">
+          <div class="ring" id="ring" role="list"></div>
+        </div>
+        <div id="galleryStatus" style="margin-top:10px; color:var(--muted)">Memuat galeri…</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="Pratinjau foto">
+    <div class="lb-inner">
+      <div class="lb-nav">
+        <button class="lb-btn" id="lbPrev" aria-label="Sebelumnya">⟵</button>
+        <button class="lb-btn" id="lbNext" aria-label="Berikutnya">⟶</button>
+      </div>
+      <img class="lb-img" id="lbImg" alt="Pratinjau foto">
+      <div class="lb-cap" id="lbCap"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlayStart" aria-hidden="true">
+    <div>
+      <h2 style="margin:0 0 6px">Tap untuk Memulai</h2>
+      <p style="margin:0 0 14px; color:var(--muted)">Aktifkan musik & animasi lembut.</p>
+      <button class="btn accent" id="btnStartNow">💗 Mulai</button>
+    </div>
+  </div>
+
+  <footer>
+    <small>© <span id="year"></span> Dengan cinta, <span id="footerNames"></span>. Semoga Allah menjaga kita selamanya. 🩷</small>
+  </footer>
+
+  <script>
+  /* =======================
+     KONFIGURASI MUDAH UBAH
+  ======================= */
+  const CONFIG = {
+    NAMA_ISTRI: "Fadhia Liza Bachtiar",
+    NAMA_SUAMI: "Feri Yusri Efendi",
+    TANGGAL_PERNIKAHAN: "2024-12-12", // YYYY-MM-DD
+    TANGGAL_PERTEMUAN: "2023-10-30",  // YYYY-MM-DD
+    AUDIO_FILE: "audio/lagu.mp3",
+    GALERI_FOLDER: "galeri",
+    GALERI_INDEX_JSON: "galeri/index.json",
+    AUTOPLAY_MUSIC: true,
+    ENABLE_SFX: true,
+    MAX_PARTICLES: 150,
+    PINK_HEX: "#ff6fa8",
+    THEME: "galaxy-sakura",
+    ANNIVERSARY_SPECIAL_DATE: "12-12", // mm-dd
+    REDUCED_MOTION_RESPECT: true
+  };
+
+  /* =============
+     UTIL FUNCS
+  ============= */
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const prefersReduced = () => CONFIG.REDUCED_MOTION_RESPECT && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = (n)=> new Intl.NumberFormat('id-ID').format(n);
+  const todayStr = () => new Date().toISOString().slice(0,10);
+  const getParam = (k)=> new URLSearchParams(location.search).get(k);
+  const debugOn = () => getParam('debug')==='1';
+
+  /* =================
+     TYPEWRITER TEXT
+  ================= */
+  const paragraphs = [
+    () => `Sayangku <b>${CONFIG.NAMA_ISTRI}</b>, maafkan aku bila belum selalu jadi suami yang terbaik. Aku sadar masih banyak kurang—kadang keras kepala, kadang lelah menutupi gelisah soal ekonomi. Tapi aku berjanji memperbaiki diri, belajar mendengar, dan bekerja lebih tekun agar kita bisa tersenyum lega bersama.`,
+    () => `Aku ingin jadi tempatmu pulang yang hangat; yang memeluk harimu dengan sabar. Tolong genggam tanganku terus, ya. Bersama, kita kuat. Terima kasih sudah setia. Aku mencintaimu hari ini, esok, dan seterusnya. — <i>${CONFIG.NAMA_SUAMI}</i>`
+  ];
+
+  async function runTypewriter(){
+    const el = $('#typewriter');
+    el.innerHTML='';
+    for(const p of paragraphs){
+      const html = p();
+      // type char by char (strip tags then map)
+      const tmp = document.createElement('div'); tmp.innerHTML=html;
+      const text = tmp.textContent || tmp.innerText || '';
+      const frag = document.createElement('span');
+      el.appendChild(frag);
+      for(let i=0;i<text.length;i++){
+        frag.textContent += text[i];
+        if(prefersReduced()) { /* fast */ await new Promise(r=>setTimeout(r, 4)); }
+        else await new Promise(r=>setTimeout(r, 12));
+      }
+      // then replace with full html to keep styling
+      frag.outerHTML = `<span>${html}</span>`;
+      await new Promise(r=>setTimeout(r, 300));
+    }
+  }
+  function skipTypewriter(){
+    const el = $('#typewriter');
+    el.innerHTML = paragraphs.map(p=>`<p>${p()}</p>`).join('');
+  }
+
+  /* =============
+     AUDIO PLAYER
+  ============= */
+  const audio = new Audio();
+  audio.src = CONFIG.AUDIO_FILE; audio.loop = true; audio.preload = 'auto'; audio.volume = 0.6;
+  const LS = {
+    get(k, d=null){ try{ return JSON.parse(localStorage.getItem(k)); }catch{ return d; } },
+    set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+  };
+  function setMuted(m){ audio.muted = m; $('#btnMute').textContent = m ? '🔇 Unmute' : '🔈 Mute'; LS.set('muted', !!m); }
+  async function tryAutoplay(){
+    if(!CONFIG.AUTOPLAY_MUSIC) return;
+    try{
+      await audio.play(); $('#btnPlay').textContent='⏸️ Jeda Musik';
+    }catch(err){
+      // Need user gesture
+      $('#overlayStart').classList.add('show');
+    }
+  }
+  function togglePlay(){ if(audio.paused){ audio.play(); $('#btnPlay').textContent='⏸️ Jeda Musik'; } else { audio.pause(); $('#btnPlay').textContent='▶️ Putar Musik'; } }
+
+  /* ======================
+     STARFIELD & FX CANVAS
+  ====================== */
+  const starCanvas = $('#starCanvas');
+  const fxCanvas = $('#fxCanvas');
+  const sCtx = starCanvas.getContext('2d');
+  const fCtx = fxCanvas.getContext('2d');
+  let stars = [], petals = [], hearts = [];
+  let w=0,h=0, deviceRatio=1;
+
+  function resizeCanvases(){
+    w = starCanvas.width = fxCanvas.width = innerWidth * devicePixelRatio;
+    h = starCanvas.height = fxCanvas.height = innerHeight * devicePixelRatio;
+    deviceRatio = devicePixelRatio;
+  }
+  addEventListener('resize', ()=>{ resizeCanvases(); initStars(true); });
+
+  function initStars(keepCount=false){
+    const desired = prefersReduced()? 80 : clamp(Math.round((innerWidth*innerHeight)/13000), 120, 350);
+    if(!keepCount){ stars.length=0; }
+    while(stars.length < desired){
+      stars.push({ x: Math.random()*w, y: Math.random()*h, z: Math.random()*1+0.2, tw: Math.random(), t: Math.random()*6.28 });
+    }
+  }
+  function drawStars(dt){
+    sCtx.clearRect(0,0,w,h);
+    sCtx.save(); sCtx.fillStyle = '#ffffff';
+    for(const s of stars){
+      s.t += dt*0.002; const tw = (Math.sin(s.t)+1)/2; const r = (0.6 + tw*1.6) * s.z * deviceRatio;
+      sCtx.globalAlpha = 0.5 + tw*0.5; sCtx.beginPath(); sCtx.arc(s.x, s.y, r, 0, Math.PI*2); sCtx.fill();
+      // slow drift
+      s.x += (0.05 * s.z);
+      if(s.x> w+8) s.x = -8;
+    }
+    sCtx.restore();
+  }
+
+  function spawnPetal(x,y,n=12){
+    const limit = CONFIG.MAX_PARTICLES;
+    const count = prefersReduced()? 4 : n;
+    for(let i=0;i<count;i++){
+      if(petals.length>limit){ petals.shift(); }
+      petals.push({
+        x:x*deviceRatio, y:y*deviceRatio, vx:(Math.random()-0.5)*2.2*deviceRatio, vy:(Math.random()-1.2)*2.4*deviceRatio,
+        rot: Math.random()*Math.PI*2, vr: (Math.random()-0.5)*0.05, size:(10+Math.random()*14)*deviceRatio, life:0, max: 200+Math.random()*180
+      });
+    }
+  }
+  function drawPetals(){
+    for(let i=petals.length-1;i>=0;i--){
+      const p = petals[i]; p.life++;
+      p.vy += 0.02*deviceRatio; p.vx *= 0.995; p.vy *= 0.995; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      if(p.life>p.max || p.y>h+80*deviceRatio){ petals.splice(i,1); continue; }
+    }
+    fCtx.clearRect(0,0,w,h);
+    for(const p of petals){
+      drawPetal(p.x, p.y, p.size, p.rot);
+    }
+    for(const he of hearts){ drawHeart(he); }
+  }
+  function drawPetal(x,y,s,rot){
+    fCtx.save(); fCtx.translate(x,y); fCtx.rotate(rot);
+    const g = fCtx.createLinearGradient(0,-s,0,s);
+    g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(1, CONFIG.PINK_HEX);
+    fCtx.fillStyle = g; fCtx.beginPath();
+    // simple petal shape using bezier
+    fCtx.moveTo(0, -s*0.9);
+    fCtx.bezierCurveTo(s*0.6, -s*0.6, s*0.8, 0, 0, s);
+    fCtx.bezierCurveTo(-s*0.8, 0, -s*0.6, -s*0.6, 0, -s*0.9);
+    fCtx.fill(); fCtx.restore();
+  }
+  function drawHeart(o){
+    o.life++; o.y += o.vy; o.x += o.vx; o.alpha = Math.max(0, 1 - o.life/o.max);
+    if(o.life>o.max) { hearts.splice(hearts.indexOf(o),1); return; }
+    fCtx.save(); fCtx.globalAlpha = o.alpha; fCtx.translate(o.x, o.y); fCtx.scale(o.s, o.s);
+    fCtx.fillStyle = CONFIG.PINK_HEX; fCtx.beginPath();
+    fCtx.moveTo(0, -10);
+    fCtx.bezierCurveTo(12,-22, 36,-4, 0, 22);
+    fCtx.bezierCurveTo(-36,-4, -12,-22, 0, -10);
+    fCtx.fill(); fCtx.restore();
+  }
+  function spawnHeartsTrail(){
+    if(prefersReduced()) return;
+    const x = (innerWidth*0.5 + (Math.random()-0.5)*innerWidth*0.9) * devicePixelRatio;
+    const y = (scrollY + innerHeight*0.2 + Math.random()*innerHeight*0.6) * devicePixelRatio;
+    hearts.push({x, y, vx:(Math.random()-0.5)*0.8*devicePixelRatio, vy: (-1.2 - Math.random()*0.8)*devicePixelRatio, s: 0.6+Math.random()*0.7, life:0, max:120+Math.random()*120, alpha:1});
+    if(hearts.length>60) hearts.shift();
+  }
+
+  /* ==================
+     ANNIVERSARY LOGIC
+  ================== */
+  function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+  function calcCounters(){
+    const meet = new Date(CONFIG.TANGGAL_PERTEMUAN + 'T00:00:00');
+    const wed  = new Date(CONFIG.TANGGAL_PERNIKAHAN + 'T00:00:00');
+    const now  = new Date();
+    $('#daysTogether').textContent = fmt(daysBetween(meet, now));
+
+    // next anniversary
+    const yearNow = now.getFullYear();
+    const [y,m,d] = CONFIG.TANGGAL_PERNIKAHAN.split('-').map(Number);
+    let next = new Date(yearNow, m-1, d);
+    if(next < new Date(now.getFullYear(), now.getMonth(), now.getDate())){
+      next = new Date(yearNow+1, m-1, d);
+    }
+    $('#annivIn').textContent = fmt(daysBetween(new Date(now.getFullYear(), now.getMonth(), now.getDate()), next));
+
+    // anniversary number
+    let anniv = yearNow - y; if(new Date(yearNow, m-1, d) > now) anniv -= 1; if(anniv<1) anniv=1;
+    $('#annivKe').textContent = fmt(anniv);
+  }
+
+  let anniversaryMode = false, slideshowTimer = null;
+  function setAnniversaryMode(on){
+    anniversaryMode = !!on;
+    document.body.style.setProperty('--stars-boost', on? '1' : '0');
+    $('#btnAnniv').textContent = on? '✨ Matikan Anniversary' : '🎉 Mode Anniversary';
+    if(on){
+      // boost visuals
+      initStars(false);
+      // auto slideshow if gallery exists
+      startSlideshow();
+      spawnPetal(innerWidth*0.5, innerHeight*0.2, 50);
+    } else {
+      stopSlideshow();
+    }
+  }
+  function checkAutoAnniversary(){
+    const now = new Date();
+    const md = CONFIG.ANNIVERSARY_SPECIAL_DATE;
+    const [mm,dd] = md.split('-').map(Number);
+    if(now.getMonth()+1===mm && now.getDate()===dd){ setAnniversaryMode(true); }
+  }
+  function startSlideshow(){
+    stopSlideshow();
+    if(gallery.items.length===0) return;
+    let idx = 0; slideshowTimer = setInterval(()=>{ openLightbox(idx % gallery.items.length); idx++; }, 4500);
+  }
+  function stopSlideshow(){ if(slideshowTimer){ clearInterval(slideshowTimer); slideshowTimer=null; } }
+
+  /* ================
+     GALLERY LOADING
+  ================ */
+  const gallery = { items: [], angle:0, dragging:false, lastX:0, inertia:0 };
+
+  async function loadGallery(){
+    $('#galleryStatus').textContent = 'Memuat galeri…';
+    let items = [];
+    const isFile = location.protocol === 'file:';
+    // 0) Try embedded JSON if in file:// or as quick path
+    try{
+      const tag = document.getElementById('EMBED_GALLERY');
+      if(tag){
+        const data = JSON.parse(tag.textContent);
+        if(Array.isArray(data.images) && data.images.length){
+          items = data.images.map(e=>({ src: `${CONFIG.GALERI_FOLDER}/${e.src}`, title: e.title||nameFromPath(e.src), date: e.date||null }));
+        }
+      }
+    }catch{}
+    // 1) Try index.json via fetch (works on localhost/http)
+    if(items.length===0){
+      try{
+        const res = await fetch(CONFIG.GALERI_INDEX_JSON, {cache:'no-cache'});
+        if(res.ok){
+          const j = await res.json();
+          if(Array.isArray(j.images)){
+            items = j.images.map(e=>({ src: `${CONFIG.GALERI_FOLDER}/${e.src}`, title: e.title||nameFromPath(e.src), date: e.date||null }));
+          }
+        }
+      }catch{}
+    }
+    // 2) Try autoindex (only http)
+    if(items.length===0 && !isFile){
+      try{
+        const res2 = await fetch(`${CONFIG.GALERI_FOLDER}/`, {cache:'no-cache'});
+        if(res2.ok){
+          const html = await res2.text();
+          const anchors = [...html.matchAll(/href\s*=\s*"([^"]+)"/gi)].map(m=>m[1]);
+          const imgs = anchors.filter(a=>/\.(jpe?g|png|webp|gif)$/i.test(a)).map(src=>({src:`${CONFIG.GALERI_FOLDER}/${decodeURIComponent(src)}`}));
+          items = imgs.map(x=>({ src:x.src, title:nameFromPath(x.src), date:null }));
+        }
+      }catch{}
+    }
+    // 3) File-mode numeric probing (01..200 with common extensions)
+    if(items.length===0 && isFile){
+      const exts = ['jpg','jpeg','png','webp','gif'];
+      const found = [];
+      const pad2 = (n)=> (n<10? '0'+n : ''+n);
+      const testList = [];
+      for(let n=1;n<=200;n++){
+        for(const ext of exts){ testList.push(`${CONFIG.GALERI_FOLDER}/${pad2(n)}.${ext}`); }
+      }
+      // probe using Image objects
+      const loadProbe = (src)=> new Promise(resolve=>{
+        const im = new Image(); im.onload=()=>resolve(src); im.onerror=()=>resolve(null); im.src=src;
+      });
+      const chunkSize = 12;
+      for(let i=0;i<testList.length;i+=chunkSize){
+        const chunk = testList.slice(i,i+chunkSize);
+        const res = await Promise.all(chunk.map(loadProbe));
+        res.filter(Boolean).forEach(s=>found.push(s));
+        if(found.length>=1 && i>120) break; // early stop after some checks
+      }
+      items = found.map(s=>({ src:s, title:nameFromPath(s), date:null }));
+    }
+
+    // 4) Fallback: use picker
+    if(items.length===0){
+      $('#galleryStatus').innerHTML = 'Tidak bisa membaca folder galeri secara otomatis. Gunakan tombol <b>📂 Pilih Foto</b> untuk menambahkan gambar.';
+    }
+
+    if(items.length>0){
+      items.sort((a,b)=>{
+        if(a.date && b.date){ return a.date.localeCompare(b.date); }
+        if(a.date) return -1; if(b.date) return 1; return a.title.localeCompare(b.title);
+      });
+      gallery.items = items; buildRing(); $('#galleryStatus').textContent = `${items.length} foto dimuat.`;
+    }
+  }
+  function nameFromPath(p){
+    const n = p.split('/').pop().replace(/\.[^.]+$/,'');
+    return n.replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  }
+
+  function buildRing(){
+    const ring = $('#ring'); ring.innerHTML='';
+    const N = gallery.items.length; if(N===0) return;
+    const radius = 420; // px depth
+    for(let i=0;i<N;i++){
+      const it = document.createElement('div'); it.className='item'; it.setAttribute('role','listitem'); it.tabIndex=0;
+      const img = document.createElement('img'); img.loading='lazy'; img.alt = gallery.items[i].title || 'Foto'; img.src = gallery.items[i].src;
+      const cap = document.createElement('div'); cap.className='cap'; cap.textContent = gallery.items[i].title || '';
+      it.appendChild(img); it.appendChild(cap);
+      ring.appendChild(it);
+    }
+    positionRing();
+    // events
+    $('#stage').addEventListener('wheel', e=>{ e.preventDefault(); gallery.angle += (e.deltaY>0? 10 : -10); positionRing(); }, {passive:false});
+    $('#stage').addEventListener('pointerdown', onDragStart);
+    addEventListener('pointerup', onDragEnd);
+    addEventListener('pointermove', onDragMove);
+    $$('#ring .item').forEach((el, idx)=>{
+      el.addEventListener('click', ()=>openLightbox(idx));
+      el.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter' || ev.key===' '){ openLightbox(idx); ev.preventDefault(); }});
+    });
+  }
+  function positionRing(){
+    const ring = $('#ring'); const N = gallery.items.length; if(N===0) return;
+    const children = $$('#ring .item');
+    for(let i=0;i<N;i++){
+      const angle = (360/N)*i + gallery.angle; const rad = angle * Math.PI/180;
+      const x = Math.sin(rad) * 380; const z = Math.cos(rad) * 380;
+      children[i].style.transform = `translateZ(${z}px) translateX(${x}px) rotateY(${angle}deg)`;
+      children[i].style.zIndex = (1000 + Math.round(z));
+      children[i].style.opacity = lerp(0.35, 1, (z+380)/760);
+    }
+  }
+  function onDragStart(e){ gallery.dragging=true; gallery.lastX = e.clientX; gallery.inertia=0; $('#stage').setPointerCapture(e.pointerId); }
+  function onDragMove(e){ if(!gallery.dragging) return; const dx = e.clientX - gallery.lastX; gallery.lastX = e.clientX; gallery.angle += dx*0.6; gallery.inertia = dx*0.95; positionRing(); }
+  function onDragEnd(e){ if(!gallery.dragging) return; gallery.dragging=false; const id = e.pointerId; try{ $('#stage').releasePointerCapture(id);}catch{}
+    // inertia
+    let stop=false; const step=()=>{ if(stop) return; gallery.angle += gallery.inertia; gallery.inertia *= 0.94; positionRing(); if(Math.abs(gallery.inertia)<0.1) stop=true; else requestAnimationFrame(step); }; requestAnimationFrame(step);
+  }
+
+  // File picker fallback (input multiple)
+  $('#filePicker').addEventListener('change', (e)=>{
+    const files = [...e.target.files]; if(!files.length) return;
+    gallery.items = files.map(f=>({ src: URL.createObjectURL(f), title: nameFromPath(f.name), date:null }));
+    buildRing(); $('#galleryStatus').textContent = `${gallery.items.length} foto dari perangkat.`;
+  });
+
+  /* =============
+     LIGHTBOX
+  ============= */
+  let lbIndex = 0;
+  function openLightbox(i){ if(gallery.items.length===0) return; lbIndex = (i+gallery.items.length)%gallery.items.length; const it = gallery.items[lbIndex]; $('#lbImg').src = it.src; $('#lbImg').alt = it.title||'Foto'; $('#lbCap').textContent = it.title||''; $('#lightbox').classList.add('open'); }
+  function closeLightbox(){ $('#lightbox').classList.remove('open'); }
+  $('#lbPrev').addEventListener('click', ()=>openLightbox(lbIndex-1));
+  $('#lbNext').addEventListener('click', ()=>openLightbox(lbIndex+1));
+  $('#lightbox').addEventListener('click', (e)=>{ if(e.target.id==='lightbox') closeLightbox(); });
+  addEventListener('keydown', (e)=>{ if($('#lightbox').classList.contains('open')){ if(e.key==='Escape') closeLightbox(); if(e.key==='ArrowRight') openLightbox(lbIndex+1); if(e.key==='ArrowLeft') openLightbox(lbIndex-1); }});
+
+  /* =============
+     SFX (optional)
+  ============= */
+  function sfxClick(){
+    if(!CONFIG.ENABLE_SFX || audio.muted) return;
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type='sine'; o.frequency.value = 880; g.gain.value=0.0006; o.connect(g); g.connect(ctx.destination); o.start();
+      setTimeout(()=>{ o.stop(); ctx.close(); }, 80);
+    }catch{}
+  }
+
+  /* ===================
+     EVENT WIRING & INIT
+  =================== */
+  function setTexts(){
+    $('#pageTitle').innerHTML = `Untuk ${CONFIG.NAMA_ISTRI}`;
+    $('#subtitle').textContent = `${CONFIG.THEME.replace(/-/g,' ')} • ${CONFIG.NAMA_SUAMI} ❤ ${CONFIG.NAMA_ISTRI}`;
+    $('#p1').innerHTML = paragraphs[0]();
+    $('#p2').innerHTML = paragraphs[1]();
+    $('#footerNames').textContent = `${CONFIG.NAMA_ISTRI} & ${CONFIG.NAMA_SUAMI}`;
+    $('#year').textContent = new Date().getFullYear();
+  }
+
+  // Controls
+  $('#btnPlay').addEventListener('click', ()=>{ togglePlay(); sfxClick(); });
+  $('#btnMute').addEventListener('click', ()=>{ setMuted(!audio.muted); sfxClick(); });
+  $('#btnSkip').addEventListener('click', ()=>{ skipTypewriter(); sfxClick(); });
+  $('#btnAnniv').addEventListener('click', ()=>{ setAnniversaryMode(!anniversaryMode); sfxClick(); });
+  $('#btnOpenGaleri').addEventListener('click', ()=>{ document.getElementById('gallery').scrollIntoView({behavior: prefersReduced()? 'auto':'smooth'}); sfxClick(); });
+  $('#btnReload').addEventListener('click', ()=>{ loadGallery(); sfxClick(); });
+  $('#btnPrev').addEventListener('click', ()=>{ gallery.angle -= 30; positionRing(); sfxClick(); });
+  $('#btnNext').addEventListener('click', ()=>{ gallery.angle += 30; positionRing(); sfxClick(); });
+  $('#btnStartNow').addEventListener('click', async()=>{ try{ await audio.play(); $('#btnPlay').textContent='⏸️ Jeda Musik'; }catch{} $('#overlayStart').classList.remove('show'); });
+
+  // Global click: petals
+  addEventListener('click', (e)=>{ if(e.target.closest('button, .lb-btn, #filePicker, label')) return; spawnPetal(e.clientX, e.clientY, 16); sfxClick(); });
+  // Scroll hearts
+  let heartThrottle=0; addEventListener('scroll', ()=>{ const now=performance.now(); if(now-heartThrottle>120){ heartThrottle=now; spawnHeartsTrail(); } }, {passive:true});
+
+  // Render loop
+  let last=performance.now();
+  function frame(now){
+    const dt = now-last; last=now; drawStars(dt); drawPetals(); requestAnimationFrame(frame);
+  }
+
+  // Boot
+  (function init(){
+    setTexts();
+    resizeCanvases(); initStars(false); requestAnimationFrame(frame);
+    setMuted(!!LS.get('muted', false));
+    if(!prefersReduced()) runTypewriter(); else skipTypewriter();
+    tryAutoplay();
+    calcCounters(); setInterval(calcCounters, 60*1000);
+    checkAutoAnniversary();
+    loadGallery();
+    // small parallax
+    document.addEventListener('pointermove', (e)=>{
+      if(prefersReduced()) return;
+      const dx = (e.clientX/innerWidth - 0.5), dy=(e.clientY/innerHeight - 0.5);
+      document.querySelector('.hero-inner').style.transform = `translate3d(${dx*8}px, ${dy*6}px, 0)`;
+    });
+
+    if(debugOn()) addDebugHUD();
+  })();
+
+  function addDebugHUD(){
+    const box = document.createElement('div');
+    Object.assign(box.style,{position:'fixed', right:'8px', bottom:'8px', background:'rgba(0,0,0,.35)', padding:'8px 10px', borderRadius:'10px', fontSize:'12px', zIndex:99, border:'1px solid rgba(255,255,255,.1)'});
+    document.body.appendChild(box);
+    let last = performance.now(), fps=0;
+    function tick(){ const now=performance.now(); fps = Math.round(1000/(now-last)); last=now; box.innerHTML = `FPS: ${fps}<br>Petals: ${petals.length}<br>Hearts: ${hearts.length}<br>Stars: ${stars.length}<br>Images: ${gallery.items.length}`; requestAnimationFrame(tick); }
+    requestAnimationFrame(tick);
+  }
+  </script>
+</body>
+</html>

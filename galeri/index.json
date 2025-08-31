@@ -1,0 +1,36 @@
+{
+  "images": [
+    {
+      "src": "01.jpg",
+      "title": "Kenangan 1"
+    },
+    {
+      "src": "02.jpg",
+      "title": "Kenangan 2"
+    },
+    {
+      "src": "03.jpg",
+      "title": "Kenangan 3"
+    },
+    {
+      "src": "04.jpg",
+      "title": "Kenangan 4"
+    },
+    {
+      "src": "05.jpg",
+      "title": "Kenangan 5"
+    },
+    {
+      "src": "06.jpg",
+      "title": "Kenangan 6"
+    },
+    {
+      "src": "07.jpg",
+      "title": "Kenangan 7"
+    },
+    {
+      "src": "08.jpg",
+      "title": "Kenangan 8"
+    }
+  ]
+}
