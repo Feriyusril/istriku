@@ -222,6 +222,20 @@
     REDUCED_MOTION_RESPECT: true
   };
 
+  // --- Device Detection (desktop vs mobile; tablet unchanged) ---
+  const Device = (() => {
+    const mq = (q)=> window.matchMedia(q).matches;
+    const coarse = mq('(pointer: coarse)');
+    const isSmartphone = ()=> coarse && mq('(max-width: 640px)');
+    const isTablet = ()=> coarse && mq('(min-width: 641px) and (max-width: 1024px)');
+    const isDesktop = ()=> !coarse || mq('(min-width: 1025px)');
+    const name = ()=> isSmartphone()? 'mobile' : (isTablet()? 'tablet' : 'desktop');
+    const apply = ()=> { document.body.dataset.device = name(); };
+    addEventListener('resize', apply);
+    apply();
+    return {isSmartphone, isTablet, isDesktop, name};
+  })();
+
   /* =============
      UTIL FUNCS
   ============= */
@@ -307,7 +321,11 @@
   addEventListener('resize', ()=>{ resizeCanvases(); initStars(true); });
 
   function initStars(keepCount=false){
-    const desired = prefersReduced()? 80 : clamp(Math.round((innerWidth*innerHeight)/13000), 120, 350);
+    const base = clamp(Math.round((innerWidth*innerHeight)/13000), 120, 350);
+    const desired = prefersReduced()? 80 : (
+      Device.isSmartphone()? Math.max(80, Math.round(base*0.6)) :
+      Device.isDesktop()? Math.round(base*1.1) : base
+    );
     if(!keepCount){ stars.length=0; }
     while(stars.length < desired){
       stars.push({ x: Math.random()*w, y: Math.random()*h, z: Math.random()*1+0.2, tw: Math.random(), t: Math.random()*6.28 });
@@ -327,7 +345,7 @@
   }
 
   function spawnPetal(x,y,n=12){
-    const limit = CONFIG.MAX_PARTICLES;
+    const limit = Device.isSmartphone()? Math.floor(CONFIG.MAX_PARTICLES*0.6) : (Device.isDesktop()? CONFIG.MAX_PARTICLES : Math.floor(CONFIG.MAX_PARTICLES*0.85));
     const count = prefersReduced()? 4 : n;
     for(let i=0;i<count;i++){
       if(petals.length>limit){ petals.shift(); }
@@ -438,31 +456,19 @@
   async function loadGallery(){
     $('#galleryStatus').textContent = 'Memuat galeri…';
     let items = [];
-    const isFile = location.protocol === 'file:';
-    // 0) Try embedded JSON if in file:// or as quick path
+    // 1) Try index.json
     try{
-      const tag = document.getElementById('EMBED_GALLERY');
-      if(tag){
-        const data = JSON.parse(tag.textContent);
-        if(Array.isArray(data.images) && data.images.length){
-          items = data.images.map(e=>({ src: `${CONFIG.GALERI_FOLDER}/${e.src}`, title: e.title||nameFromPath(e.src), date: e.date||null }));
+      const res = await fetch(CONFIG.GALERI_INDEX_JSON, {cache:'no-cache'});
+      if(res.ok){
+        const j = await res.json();
+        if(Array.isArray(j.images)){
+          items = j.images.map(e=>({ src: `${CONFIG.GALERI_FOLDER}/${e.src}`, title: e.title||nameFromPath(e.src), date: e.date||null }));
         }
       }
     }catch{}
-    // 1) Try index.json via fetch (works on localhost/http)
+
+    // 2) Try autoindex
     if(items.length===0){
-      try{
-        const res = await fetch(CONFIG.GALERI_INDEX_JSON, {cache:'no-cache'});
-        if(res.ok){
-          const j = await res.json();
-          if(Array.isArray(j.images)){
-            items = j.images.map(e=>({ src: `${CONFIG.GALERI_FOLDER}/${e.src}`, title: e.title||nameFromPath(e.src), date: e.date||null }));
-          }
-        }
-      }catch{}
-    }
-    // 2) Try autoindex (only http)
-    if(items.length===0 && !isFile){
       try{
         const res2 = await fetch(`${CONFIG.GALERI_FOLDER}/`, {cache:'no-cache'});
         if(res2.ok){
@@ -473,35 +479,14 @@
         }
       }catch{}
     }
-    // 3) File-mode numeric probing (01..200 with common extensions)
-    if(items.length===0 && isFile){
-      const exts = ['jpg','jpeg','png','webp','gif'];
-      const found = [];
-      const pad2 = (n)=> (n<10? '0'+n : ''+n);
-      const testList = [];
-      for(let n=1;n<=200;n++){
-        for(const ext of exts){ testList.push(`${CONFIG.GALERI_FOLDER}/${pad2(n)}.${ext}`); }
-      }
-      // probe using Image objects
-      const loadProbe = (src)=> new Promise(resolve=>{
-        const im = new Image(); im.onload=()=>resolve(src); im.onerror=()=>resolve(null); im.src=src;
-      });
-      const chunkSize = 12;
-      for(let i=0;i<testList.length;i+=chunkSize){
-        const chunk = testList.slice(i,i+chunkSize);
-        const res = await Promise.all(chunk.map(loadProbe));
-        res.filter(Boolean).forEach(s=>found.push(s));
-        if(found.length>=1 && i>120) break; // early stop after some checks
-      }
-      items = found.map(s=>({ src:s, title:nameFromPath(s), date:null }));
-    }
 
-    // 4) Fallback: use picker
+    // 3) Fallback: wait for picker or file input
     if(items.length===0){
       $('#galleryStatus').innerHTML = 'Tidak bisa membaca folder galeri secara otomatis. Gunakan tombol <b>📂 Pilih Foto</b> untuk menambahkan gambar.';
     }
 
     if(items.length>0){
+      // sort by date then name
       items.sort((a,b)=>{
         if(a.date && b.date){ return a.date.localeCompare(b.date); }
         if(a.date) return -1; if(b.date) return 1; return a.title.localeCompare(b.title);
@@ -548,7 +533,7 @@
     }
   }
   function onDragStart(e){ gallery.dragging=true; gallery.lastX = e.clientX; gallery.inertia=0; $('#stage').setPointerCapture(e.pointerId); }
-  function onDragMove(e){ if(!gallery.dragging) return; const dx = e.clientX - gallery.lastX; gallery.lastX = e.clientX; gallery.angle += dx*0.6; gallery.inertia = dx*0.95; positionRing(); }
+  function onDragMove(e){ if(!gallery.dragging) return; const dx = e.clientX - gallery.lastX; gallery.lastX = e.clientX; const k = Device.isSmartphone()? 0.8 : 0.6; gallery.angle += dx*k; gallery.inertia = dx*(Device.isSmartphone()? 1.0 : 0.95); positionRing(); }
   function onDragEnd(e){ if(!gallery.dragging) return; gallery.dragging=false; const id = e.pointerId; try{ $('#stage').releasePointerCapture(id);}catch{}
     // inertia
     let stop=false; const step=()=>{ if(stop) return; gallery.angle += gallery.inertia; gallery.inertia *= 0.94; positionRing(); if(Math.abs(gallery.inertia)<0.1) stop=true; else requestAnimationFrame(step); }; requestAnimationFrame(step);
@@ -607,6 +592,15 @@
   $('#btnPrev').addEventListener('click', ()=>{ gallery.angle -= 30; positionRing(); sfxClick(); });
   $('#btnNext').addEventListener('click', ()=>{ gallery.angle += 30; positionRing(); sfxClick(); });
   $('#btnStartNow').addEventListener('click', async()=>{ try{ await audio.play(); $('#btnPlay').textContent='⏸️ Jeda Musik'; }catch{} $('#overlayStart').classList.remove('show'); });
+
+  // Touch fallback for smartphone only (keeps tablet logic same)
+  (function enableTouchForMobile(){
+    const stage = document.getElementById('stage');
+    let down = false, lastX = 0;
+    stage.addEventListener('touchstart', (e)=>{ if(!Device.isSmartphone()) return; if(e.touches.length!==1) return; down=true; lastX=e.touches[0].clientX; }, {passive:true});
+    stage.addEventListener('touchmove', (e)=>{ if(!down||!Device.isSmartphone()) return; const x=e.touches[0].clientX; const dx=x-lastX; lastX=x; const k=0.8; gallery.angle += dx*k; gallery.inertia = dx*1.0; positionRing(); e.preventDefault(); }, {passive:false});
+    stage.addEventListener('touchend', ()=>{ down=false; }, {passive:true});
+  })();
 
   // Global click: petals
   addEventListener('click', (e)=>{ if(e.target.closest('button, .lb-btn, #filePicker, label')) return; spawnPetal(e.clientX, e.clientY, 16); sfxClick(); });
